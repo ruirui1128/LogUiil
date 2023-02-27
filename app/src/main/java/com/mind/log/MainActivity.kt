@@ -2,7 +2,6 @@ package com.mind.log
 
 import android.Manifest
 import android.os.Bundle
-import android.os.Environment
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
@@ -76,7 +75,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun allGranted() {
-        val path = Environment.getExternalStorageDirectory().toString()
+        val fileDir = this.getExternalFilesDir(null)
+        if (fileDir?.exists()==false){
+            fileDir.mkdirs()
+        }
+        val path = fileDir?.absolutePath
         // 支持输入日志到文件
         LogUtils.getLog2FileConfig()
             .configLog2FileEnable(true)
