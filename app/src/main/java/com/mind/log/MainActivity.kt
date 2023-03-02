@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun allGranted() {
         val fileDir = this.getExternalFilesDir(null)
-        if (fileDir?.exists()==false){
+        if (fileDir?.exists() == false) {
             fileDir.mkdirs()
         }
         val path = fileDir?.absolutePath
@@ -89,7 +89,14 @@ class MainActivity : AppCompatActivity() {
             .configLogFileEngine(LogFileEngineFactory(this))
             .configHttpLogFileEngine(LogFileHttpEngineFactory(this))
             .configActionLogFileEngine(LogFileActionEngineFactory(this))
+            .configDaysOfExpire(7) // 设置过期天数
             .flushAsync()
 
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LogUtils.getLog2FileConfig().release()
     }
 }

@@ -1,7 +1,6 @@
 package com.tan.log.config;
 
 
-
 import com.tan.log.LogLevel;
 import com.tan.log.file.LogFileEngine;
 import com.tan.log.file.LogFileFilter;
@@ -18,12 +17,10 @@ public interface Log2FileConfig {
     Log2FileConfig configLog2FilePath(String logPath);
 
     Log2FileConfig configLog2HttpFilePath(String logPath);
+
     Log2FileConfig configLog2ActionFilePath(String logPath);
 
 
-    Log2FileConfig configLog2FileNameFormat(String formatName);
-    Log2FileConfig configLog2HttpFileNameFormat(String formatName);
-    Log2FileConfig configLog2ActionFileNameFormat(String formatName);
 
     Log2FileConfig configLog2FileLevel(@LogLevel.LogLevelType int level);
 
@@ -37,6 +34,8 @@ public interface Log2FileConfig {
 
     File getLogFile(@LogLevel.LogLevelType int level);
 
+    // 设置过期天数  默认0天 既 不设置日期过期时间
+    Log2FileConfig configDaysOfExpire(int daysOfExpire);
 
     void flushAsync();
 

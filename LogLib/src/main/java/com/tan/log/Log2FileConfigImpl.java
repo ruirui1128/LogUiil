@@ -11,11 +11,12 @@ import com.tan.log.config.Log2FileConfig;
 import com.tan.log.file.LogFileEngine;
 import com.tan.log.file.LogFileFilter;
 import com.tan.log.pattern.LogPattern;
+import com.tan.log.utils.FileUtil;
 
 import java.io.File;
 
 
-class Log2FileConfigImpl implements Log2FileConfig {
+public class Log2FileConfigImpl implements Log2FileConfig {
 
     private static final String DEFAULT_LOG_NAME_FORMAT = "%d{yyyyMMdd}.txt";
 
@@ -38,7 +39,10 @@ class Log2FileConfigImpl implements Log2FileConfig {
     private static Log2FileConfigImpl singleton;
     private String customFormatName;
 
-    static Log2FileConfigImpl getInstance() {
+    // 设置过期天数  小于等于0则不开启 大于等于60按照60天算
+    private int daysOfExpire = 0;
+
+    public static Log2FileConfigImpl getInstance() {
         if (singleton == null) {
             synchronized (Log2FileConfigImpl.class) {
                 if (singleton == null) {
@@ -126,44 +130,19 @@ class Log2FileConfigImpl implements Log2FileConfig {
     }
 
 
-    @Override
-    public Log2FileConfig configLog2FileNameFormat(String formatName) {
-        if (!TextUtils.isEmpty(formatName)) {
-            this.logFormatName = formatName;
-        }
-        return this;
-    }
-
-    @Override
-    public Log2FileConfig configLog2HttpFileNameFormat(String formatName) {
-        if (!TextUtils.isEmpty(formatName)) {
-            this.logHttpFormatName = formatName;
-        }
-        return this;
-    }
-
-    @Override
-    public Log2FileConfig configLog2ActionFileNameFormat(String formatName) {
-        if (!TextUtils.isEmpty(formatName)) {
-            this.logActionFormatName = formatName;
-        }
-        return this;
-    }
-
     /**
      * 此方法重置日期格式,在不关机的情况下，重新自动分割文件
      */
     public Log2FileConfig resetFormatName() {
         flushAsync();
+        FileUtil.checkLog();
         if (customFormatName != null) {
             customFormatName = null;
         }
-
         if (httpLogFormatName != null) {
             httpLogFormatName = null;
         }
-
-        if (actionLogFormatName!= null) {
+        if (actionLogFormatName != null) {
             actionLogFormatName = null;
         }
         return this;
@@ -251,6 +230,16 @@ class Log2FileConfigImpl implements Log2FileConfig {
             return new File(getActionLogPath());
         }
         return null;
+    }
+
+    @Override
+    public Log2FileConfig configDaysOfExpire(int daysOfExpire) {
+        this.daysOfExpire = daysOfExpire;
+        return this;
+    }
+
+    public int getDaysOfExpire() {
+        return daysOfExpire;
     }
 
     @Override
