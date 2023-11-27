@@ -1,5 +1,7 @@
 package com.tan.log.utils;
 
+import android.util.Log;
+
 import com.tan.log.Log2FileConfigImpl;
 import com.tan.log.LogLevel;
 import com.tan.log.config.Log2FileConfig;
@@ -51,7 +53,7 @@ public class FileUtil {
         }
     }
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
 
     private static void checkOut(File file, int daysOfExpire) {
         try {
@@ -62,11 +64,13 @@ public class FileUtil {
             var todayTime = sdf.parse(today).getTime() / 1000L;
 
             // 删除过期文件
-            if ((todayTime - fileTime) / dayOfS - daysOfExpire < 0) {
+            if ((todayTime - fileTime) / dayOfS - daysOfExpire > 0) {
                 file.delete();
+                Log.e("FileUtil", "文件删除成功:" + file.getName());
             }
 
         } catch (Exception e) {
+            Log.e("FileUtil", "文件删除异常" + e.getMessage());
         }
 
 

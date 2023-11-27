@@ -253,6 +253,8 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (actionEngine != null) {
             actionEngine.flushAsync();
         }
+
+        FileUtil.checkLog();
     }
 
     @Override
