@@ -14,9 +14,9 @@ public class LogLevel {
     public static final int TYPE_WARM = 4;
     public static final int TYPE_ERROR = 5;
     public static final int TYPE_WTF = 6;
+    public static final int TYPE_ACTION = 7;  // 用户操作 日志
+    public static final int TYPE_HTTP = 8;  // Http 日志
 
-    public static final int TYPE_HTTP = 7;  // Http 日志
-    public static final int TYPE_ACTION = 8;  // 用户操作 日志
 
     @IntDef({TYPE_VERBOSE, TYPE_DEBUG, TYPE_INFO, TYPE_WARM, TYPE_ERROR, TYPE_WTF, TYPE_HTTP, TYPE_ACTION})
     @Retention(RetentionPolicy.SOURCE)

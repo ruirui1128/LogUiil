@@ -25,17 +25,17 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
     private LogFileEngine httpEngine;
 
-    private LogFileEngine actionEngine;
+//    private LogFileEngine actionEngine;
 
     private LogFileFilter fileFilter;
-    private @LogLevel.LogLevelType int logLevel = LogLevel.TYPE_WARM;
+    private @LogLevel.LogLevelType int logLevel = LogLevel.TYPE_ERROR;
     private boolean enable = false;
     private String logFormatName = DEFAULT_LOG_NAME_FORMAT;
     private String logHttpFormatName = DEFAULT_LOG_NAME_FORMAT;
-    private String logActionFormatName = DEFAULT_LOG_NAME_FORMAT;
+//    private String logActionFormatName = DEFAULT_LOG_NAME_FORMAT;
     private String logPath;
     private String httpLogPath;
-    private String actionLogPath;
+//    private String actionLogPath;
     private static Log2FileConfigImpl singleton;
     private String customFormatName;
 
@@ -80,15 +80,15 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return this;
     }
 
-    @Override
-    public Log2FileConfig configLog2ActionFilePath(String path) {
-        if (TextUtils.isEmpty(path)) {
-            this.actionLogPath = logPath;
-        } else {
-            this.actionLogPath = path;
-        }
-        return this;
-    }
+//    @Override
+//    public Log2FileConfig configLog2ActionFilePath(String path) {
+//        if (TextUtils.isEmpty(path)) {
+//            this.actionLogPath = logPath;
+//        } else {
+//            this.actionLogPath = path;
+//        }
+//        return this;
+//    }
 
     /**
      * 获取日志路径
@@ -118,16 +118,16 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         throw new RuntimeException("Log File Path is invalid or no sdcard permission");
     }
 
-    String getActionLogPath() {
-        if (TextUtils.isEmpty(actionLogPath)) {
-            throw new RuntimeException("actionLogPath  must not be empty");
-        }
-        File file = new File(actionLogPath);
-        if (file.exists() || file.mkdirs()) {
-            return actionLogPath;
-        }
-        throw new RuntimeException("Log File Path is invalid or no sdcard permission");
-    }
+//    String getActionLogPath() {
+//        if (TextUtils.isEmpty(actionLogPath)) {
+//            throw new RuntimeException("actionLogPath  must not be empty");
+//        }
+//        File file = new File(actionLogPath);
+//        if (file.exists() || file.mkdirs()) {
+//            return actionLogPath;
+//        }
+//        throw new RuntimeException("Log File Path is invalid or no sdcard permission");
+//    }
 
 
     /**
@@ -142,9 +142,9 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpLogFormatName != null) {
             httpLogFormatName = null;
         }
-        if (actionLogFormatName != null) {
-            actionLogFormatName = null;
-        }
+//        if (actionLogFormatName != null) {
+//            actionLogFormatName = null;
+//        }
         return this;
 
     }
@@ -165,14 +165,14 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return httpLogFormatName;
     }
 
-    private String actionLogFormatName;
-
-    String getActionLogFormatName() {
-        if (actionLogFormatName == null) {
-            actionLogFormatName = new LogPattern.Log2FileNamePattern(logActionFormatName).doApply();
-        }
-        return actionLogFormatName;
-    }
+//    private String actionLogFormatName;
+//
+//    String getActionLogFormatName() {
+//        if (actionLogFormatName == null) {
+//            actionLogFormatName = new LogPattern.Log2FileNamePattern(logActionFormatName).doApply();
+//        }
+//        return actionLogFormatName;
+//    }
 
 
     @Override
@@ -197,11 +197,11 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return this;
     }
 
-    @Override
-    public Log2FileConfig configActionLogFileEngine(LogFileEngine engine) {
-        this.actionEngine = engine;
-        return this;
-    }
+//    @Override
+//    public Log2FileConfig configActionLogFileEngine(LogFileEngine engine) {
+//        this.actionEngine = engine;
+//        return this;
+//    }
 
 
     @Override
@@ -219,7 +219,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
     @Override
     @Nullable
     public File getLogFile(@LogLevel.LogLevelType int level) {
-        if (level <= LogLevel.TYPE_WTF) {
+        if (level <= LogLevel.TYPE_ACTION) {
             String path = getLogPath();
             if (!TextUtils.isEmpty(path)) {
                 return new File(path);
@@ -227,7 +227,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         } else if (level == LogLevel.TYPE_HTTP) {
             return new File(getHttpLogPath());
         } else {
-            return new File(getActionLogPath());
+//            return new File(getActionLogPath());
         }
         return null;
     }
@@ -250,9 +250,9 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.flushAsync();
         }
-        if (actionEngine != null) {
-            actionEngine.flushAsync();
-        }
+//        if (actionEngine != null) {
+//            actionEngine.flushAsync();
+//        }
 
         FileUtil.checkLog();
     }
@@ -265,9 +265,9 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.release();
         }
-        if (actionEngine != null) {
-            actionEngine.release();
-        }
+//        if (actionEngine != null) {
+//            actionEngine.release();
+//        }
     }
 
     LogFileFilter getFileFilter() {
@@ -282,8 +282,8 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return httpEngine;
     }
 
-    LogFileEngine getActionEngine() {
-        return actionEngine;
-    }
+//    LogFileEngine getActionEngine() {
+//        return actionEngine;
+//    }
 
 }

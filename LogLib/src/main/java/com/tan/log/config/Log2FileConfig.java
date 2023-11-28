@@ -18,7 +18,7 @@ public interface Log2FileConfig {
 
     Log2FileConfig configLog2HttpFilePath(String logPath);
 
-    Log2FileConfig configLog2ActionFilePath(String logPath);
+   // Log2FileConfig configLog2ActionFilePath(String logPath);
 
 
 
@@ -28,7 +28,7 @@ public interface Log2FileConfig {
 
     Log2FileConfig configHttpLogFileEngine(LogFileEngine engine);
 
-    Log2FileConfig configActionLogFileEngine(LogFileEngine engine);
+    //Log2FileConfig configActionLogFileEngine(LogFileEngine engine);
 
     Log2FileConfig configLogFileFilter(LogFileFilter fileFilter);
 

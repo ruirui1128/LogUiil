@@ -404,7 +404,7 @@ public class Logger implements Printer {
             return;
         }
 
-        if (logLevel <= TYPE_WTF) {
+        if (logLevel <= TYPE_ACTION) {
             File logFile = new File(log2FileConfig.getLogPath(), log2FileConfig.getLogFormatName());
             if (log2FileConfig.getEngine() != null) {
                 LogFileParam param = new LogFileParam(System.currentTimeMillis(), logLevel,
@@ -423,12 +423,12 @@ public class Logger implements Printer {
             }
 
         } else {
-            if (log2FileConfig.getActionEngine() != null) {
-                File logFile = new File(log2FileConfig.getActionLogPath(), log2FileConfig.getActionLogFormatName());
-                LogFileParam param = new LogFileParam(System.currentTimeMillis(), logLevel,
-                        Thread.currentThread().getName(), tagName);
-                log2FileConfig.getActionEngine().writeToFile(logFile, logLevel, logContent, param);
-            }
+//            if (log2FileConfig.getActionEngine() != null) {
+//                File logFile = new File(log2FileConfig.getActionLogPath(), log2FileConfig.getActionLogFormatName());
+//                LogFileParam param = new LogFileParam(System.currentTimeMillis(), logLevel,
+//                        Thread.currentThread().getName(), tagName);
+//                log2FileConfig.getActionEngine().writeToFile(logFile, logLevel, logContent, param);
+//            }
 
 
         }

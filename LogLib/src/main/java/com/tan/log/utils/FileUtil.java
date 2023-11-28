@@ -1,18 +1,12 @@
 package com.tan.log.utils;
 
-import android.util.Log;
-
 import com.tan.log.Log2FileConfigImpl;
 import com.tan.log.LogLevel;
-import com.tan.log.config.Log2FileConfig;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * create by Rui on 2023/2/28
@@ -33,10 +27,10 @@ public class FileUtil {
             daysOfExpire = MAX_DAYS;
         }
 
-        File logFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_WTF);
+//        File logFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_WTF);
         File httpFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_HTTP);
         File actFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_ACTION);
-        filterFile(logFile, daysOfExpire);
+//        filterFile(logFile, daysOfExpire);
         filterFile(actFile, daysOfExpire);
         filterFile(httpFile, daysOfExpire);
 
@@ -66,11 +60,9 @@ public class FileUtil {
             // 删除过期文件
             if ((todayTime - fileTime) / dayOfS - daysOfExpire > 0) {
                 file.delete();
-                Log.e("FileUtil", "文件删除成功:" + file.getName());
             }
 
         } catch (Exception e) {
-            Log.e("FileUtil", "文件删除异常" + e.getMessage());
         }
 
 
