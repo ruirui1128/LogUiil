@@ -42,7 +42,7 @@ public class LogFileEngineFactory implements LogFileEngine {
 
     @Override
     public void writeToFile(File logFile, @LogLevel.LogLevelType int logLevel, String logContent, LogFileParam params) {
-        if (logLevel <= LogLevel.TYPE_WTF) {
+        if (logLevel <= LogLevel.TYPE_ACTION) {
             if (buffer == null) {
                 synchronized (LogFileEngineFactory.class) {
                     if (buffer == null) {
