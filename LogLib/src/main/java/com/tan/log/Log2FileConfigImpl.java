@@ -1,7 +1,15 @@
 package com.tan.log;
 
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 import androidx.annotation.NonNull;
@@ -11,9 +19,12 @@ import com.tan.log.config.Log2FileConfig;
 import com.tan.log.file.LogFileEngine;
 import com.tan.log.file.LogFileFilter;
 import com.tan.log.pattern.LogPattern;
+import com.tan.log.receivers.MidnightReceiver;
 import com.tan.log.utils.FileUtil;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 
 public class Log2FileConfigImpl implements Log2FileConfig {
@@ -32,10 +43,10 @@ public class Log2FileConfigImpl implements Log2FileConfig {
     private boolean enable = false;
     private String logFormatName = DEFAULT_LOG_NAME_FORMAT;
     private String logHttpFormatName = DEFAULT_LOG_NAME_FORMAT;
-//    private String logActionFormatName = DEFAULT_LOG_NAME_FORMAT;
+    //    private String logActionFormatName = DEFAULT_LOG_NAME_FORMAT;
     private String logPath;
     private String httpLogPath;
-//    private String actionLogPath;
+    //    private String actionLogPath;
     private static Log2FileConfigImpl singleton;
     private String customFormatName;
 
@@ -135,7 +146,6 @@ public class Log2FileConfigImpl implements Log2FileConfig {
      */
     public Log2FileConfig resetFormatName() {
         flushAsync();
-        FileUtil.checkLog();
         if (customFormatName != null) {
             customFormatName = null;
         }
@@ -236,6 +246,38 @@ public class Log2FileConfigImpl implements Log2FileConfig {
     public Log2FileConfig configDaysOfExpire(int daysOfExpire) {
         this.daysOfExpire = daysOfExpire;
         return this;
+    }
+
+
+    @Override
+    public Log2FileConfigImpl configSplitFile(Context context) {
+        if (context == null) return this;
+        AlarmManager alarmManager =
+                (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, MidnightReceiver.class);
+        intent.setAction("android.intent.action.MIDNIGHT_ALARM");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        long systemTime = System.currentTimeMillis();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        calendar.set(Calendar.HOUR_OF_DAY, 16);
+        calendar.set(Calendar.MINUTE, 50);
+        var selectTime = calendar.getTimeInMillis();
+        if (systemTime > selectTime) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            selectTime = calendar.getTimeInMillis();
+        }
+        alarmManager.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + (selectTime - systemTime),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+        );
+
+        return this;
+
     }
 
     public int getDaysOfExpire() {

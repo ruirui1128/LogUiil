@@ -1,6 +1,9 @@
 package com.tan.log.config;
 
 
+import android.content.Context;
+
+import com.tan.log.Log2FileConfigImpl;
 import com.tan.log.LogLevel;
 import com.tan.log.file.LogFileEngine;
 import com.tan.log.file.LogFileFilter;
@@ -18,8 +21,7 @@ public interface Log2FileConfig {
 
     Log2FileConfig configLog2HttpFilePath(String logPath);
 
-   // Log2FileConfig configLog2ActionFilePath(String logPath);
-
+    // Log2FileConfig configLog2ActionFilePath(String logPath);
 
 
     Log2FileConfig configLog2FileLevel(@LogLevel.LogLevelType int level);
@@ -37,7 +39,12 @@ public interface Log2FileConfig {
     // 设置过期天数  默认0天 既 不设置日期过期时间
     Log2FileConfig configDaysOfExpire(int daysOfExpire);
 
+
+
+    Log2FileConfigImpl configSplitFile(Context context);
+
     void flushAsync();
 
     void release();
+
 }
