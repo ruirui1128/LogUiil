@@ -51,11 +51,11 @@ public class FileUtil {
 
     private static void checkOut(File file, int daysOfExpire) {
         try {
-            var fileTimeString = file.getName().replace(".txt", "");
-            var fileTime = sdf.parse(fileTimeString).getTime() / 1000L;
+            String fileTimeString = file.getName().replace(".txt", "");
+            long fileTime = sdf.parse(fileTimeString).getTime() / 1000L;
 
-            var today = sdf.format(System.currentTimeMillis());
-            var todayTime = sdf.parse(today).getTime() / 1000L;
+            String today = sdf.format(System.currentTimeMillis());
+            long todayTime = sdf.parse(today).getTime() / 1000L;
 
             // 删除过期文件
             if ((todayTime - fileTime) / dayOfS - daysOfExpire > 0) {

@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity() {
             .configSplitFile(this@MainActivity)
             .configDaysOfExpire(7) // 设置过期天数
             .flushAsync()
+
     }
 
 

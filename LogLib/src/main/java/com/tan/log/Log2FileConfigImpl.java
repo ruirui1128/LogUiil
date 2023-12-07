@@ -264,7 +264,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
-        var selectTime = calendar.getTimeInMillis();
+        long selectTime = calendar.getTimeInMillis();
         if (systemTime > selectTime) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             selectTime = calendar.getTimeInMillis();
