@@ -1,16 +1,12 @@
 package com.tan.log;
 
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
