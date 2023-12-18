@@ -5,9 +5,6 @@
         android:name="com.tan.log.receivers.MidnightReceiver"
         android:enabled="true"
         android:exported="false">
-        <intent-filter>
-            <action android:name="android.intent.action.MIDNIGHT_ALARM" />
-        </intent-filter>
     </receiver>
 </application>
 </manifest>

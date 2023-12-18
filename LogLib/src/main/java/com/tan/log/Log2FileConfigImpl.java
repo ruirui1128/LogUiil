@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -141,16 +142,14 @@ public class Log2FileConfigImpl implements Log2FileConfig {
      * 此方法重置日期格式,在不关机的情况下，重新自动分割文件
      */
     public Log2FileConfig resetFormatName() {
-        flushAsync();
-        if (customFormatName != null) {
+        Log.e("resetFormatName", "=============resetFormatName()===================");
+        String logFormat = new LogPattern.Log2FileNamePattern(logFormatName).doApply();
+        String httpFormat = new LogPattern.Log2FileNamePattern(logHttpFormatName).doApply();
+        if ((customFormatName != null && !customFormatName.equals(logFormat)) && (httpLogFormatName != null && !httpLogFormatName.equals(httpFormat))) {
+            flushAsync();
             customFormatName = null;
-        }
-        if (httpLogFormatName != null) {
             httpLogFormatName = null;
         }
-//        if (actionLogFormatName != null) {
-//            actionLogFormatName = null;
-//        }
         return this;
 
     }
@@ -246,35 +245,35 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
 
     @Override
-    public Log2FileConfigImpl configSplitFile(Context context) {
+    public Log2FileConfigImpl configSplitFile(Context context, long min) {
         if (context == null) return this;
+        if (min < 0) return this;
+        if (min > 600) return this;
         AlarmManager alarmManager =
                 (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, MidnightReceiver.class);
-        intent.setAction("android.intent.action.MIDNIGHT_ALARM");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        long systemTime = System.currentTimeMillis();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        long selectTime = calendar.getTimeInMillis();
-        if (systemTime > selectTime) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            selectTime = calendar.getTimeInMillis();
-        }
-        alarmManager.setInexactRepeating(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + (selectTime - systemTime),
-                AlarmManager.INTERVAL_DAY,
-                pendingIntent
-        );
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+        long interval = min * 60 * 1000; // 毫秒数
+        long firstTriggerTime = SystemClock.elapsedRealtime() + interval;
+
+        // 设置定时任务
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTriggerTime, interval, pendingIntent);
+
 
         return this;
 
     }
+
+
+    public void cancelSplitFile(Context context) {
+        Intent alarmIntent = new Intent(context, MidnightReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
+
 
     public int getDaysOfExpire() {
         return daysOfExpire;
@@ -303,6 +302,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.release();
         }
+
 //        if (actionEngine != null) {
 //            actionEngine.release();
 //        }

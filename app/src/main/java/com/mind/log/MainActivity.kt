@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             .configLog2HttpFilePath("$path/mqtt/log/http")
             .configLogFileEngine(LogFileEngineFactory(this))
             .configHttpLogFileEngine(LogFileHttpEngineFactory(this))
-            .configSplitFile(this@MainActivity)
+            .configSplitFile(this@MainActivity,1L)
             .configDaysOfExpire(7) // 设置过期天数
             .flushAsync()
 
@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         LogUtils.getLog2FileConfig().release()
+        Log2FileConfigImpl.getInstance().cancelSplitFile(this)
     }
 
 
