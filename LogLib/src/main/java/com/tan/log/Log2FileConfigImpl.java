@@ -142,7 +142,6 @@ public class Log2FileConfigImpl implements Log2FileConfig {
      * 此方法重置日期格式,在不关机的情况下，重新自动分割文件
      */
     public Log2FileConfig resetFormatName() {
-        Log.e("resetFormatName", "=============resetFormatName()===================");
         String logFormat = new LogPattern.Log2FileNamePattern(logFormatName).doApply();
         String httpFormat = new LogPattern.Log2FileNamePattern(logHttpFormatName).doApply();
         if ((customFormatName != null && !customFormatName.equals(logFormat)) && (httpLogFormatName != null && !httpLogFormatName.equals(httpFormat))) {
