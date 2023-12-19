@@ -1,11 +1,6 @@
 package com.tan.log;
 
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,12 +11,12 @@ import com.tan.log.config.Log2FileConfig;
 import com.tan.log.file.LogFileEngine;
 import com.tan.log.file.LogFileFilter;
 import com.tan.log.pattern.LogPattern;
-import com.tan.log.receivers.MidnightReceiver;
 import com.tan.log.utils.FileUtil;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class Log2FileConfigImpl implements Log2FileConfig {
@@ -242,35 +237,29 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return this;
     }
 
+    private ScheduledExecutorService scheduler;
 
     @Override
-    public Log2FileConfigImpl configSplitFile(Context context, long min) {
-        if (context == null) return this;
-        if (min < 0) return this;
-        if (min > 600) return this;
-        AlarmManager alarmManager =
-                (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, MidnightReceiver.class);
+    public Log2FileConfigImpl configSplitFile(int min) {
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-        long interval = min * 60 * 1000; // 毫秒数
-        long firstTriggerTime = SystemClock.elapsedRealtime() + interval;
-
-        // 设置定时任务
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTriggerTime, interval, pendingIntent);
-
+        if (scheduler != null) {
+            scheduler.shutdown();
+            scheduler = null;
+        }
+        scheduler = Executors.newScheduledThreadPool(1);
+        Runnable runnableCode = this::resetFormatName;
+        scheduler.scheduleAtFixedRate(runnableCode, min, min, TimeUnit.MINUTES);
 
         return this;
 
     }
 
 
-    public void cancelSplitFile(Context context) {
-        Intent alarmIntent = new Intent(context, MidnightReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
+    public void cancelSplitFile() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+            scheduler = null;
+        }
     }
 
 
@@ -286,10 +275,6 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.flushAsync();
         }
-//        if (actionEngine != null) {
-//            actionEngine.flushAsync();
-//        }
-
         FileUtil.checkLog();
     }
 
@@ -301,10 +286,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.release();
         }
-
-//        if (actionEngine != null) {
-//            actionEngine.release();
-//        }
+        cancelSplitFile();
     }
 
     LogFileFilter getFileFilter() {
@@ -319,8 +301,5 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         return httpEngine;
     }
 
-//    LogFileEngine getActionEngine() {
-//        return actionEngine;
-//    }
 
 }

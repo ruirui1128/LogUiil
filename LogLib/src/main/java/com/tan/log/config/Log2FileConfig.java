@@ -41,7 +41,7 @@ public interface Log2FileConfig {
 
 
 
-    Log2FileConfigImpl configSplitFile(Context context,long min);
+    Log2FileConfigImpl configSplitFile(int min);
 
     void flushAsync();
 
