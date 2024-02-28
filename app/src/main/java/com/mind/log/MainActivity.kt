@@ -6,18 +6,15 @@ import android.Manifest.permission.GET_TASKS
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
 import android.widget.Button
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
-import com.tan.log.Log2FileConfigImpl
 import com.tan.log.LogUtils
-import com.tan.log.engine.LogFileActionEngineFactory
 import com.tan.log.engine.LogFileEngineFactory
 import com.tan.log.engine.LogFileHttpEngineFactory
 import java.io.BufferedInputStream
@@ -25,7 +22,6 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.concurrent.thread
@@ -53,53 +49,31 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         //  Z5KdlIGJpOt1
-        thread {
-            val name = Thread.currentThread().name
-            while (true) {
-                SystemClock.sleep(10000L)
-                LogUtils.a("${name}:=============我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志===============")
+//        thread {
+//            val name = Thread.currentThread().name
+//            while (true) {
+//                SystemClock.sleep(5000L)
+//                    LogUtils.a("${name}:=============我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志============================我是操作打印日志===============")
 //                LogUtils.h(
 //                    "${name}===================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志===================================我是http日志================"
 //                )
-//                LogUtils.e("${name}=============我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志===============")
-            }
-        }
+////                LogUtils.e("${name}=============我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志============================我是打印错误日志===============")
+//            }
+//        }
 
 
     }
 
     private fun allGranted() {
-//        val fileDir = this.getExternalFilesDir(null)
-//        if (fileDir?.exists() == false) {
-//            fileDir.mkdirs()
-//        }
-
-
-//        val sdCard = Environment.getExternalStorageDirectory()
-//        val directoryName = "YqLog" // 你想要创建的目录名称
-//        val fileDir = File(sdCard, directoryName)
-//        if (!fileDir.exists()) {
-//            fileDir.mkdirs()
-//        }
         val btn = findViewById<Button>(R.id.startBtn)
-
-        btn.postDelayed({
-            btn.performClick()
-        }, 3000)
-
+        val textView = findViewById<TextView>(R.id.tv)
+        textView.text = "版本号:" + getAppVersion()
         btn.setOnClickListener {
-            //zipFile()
-//            if (isAppBRunning(this)) {
-//                intent.component = ComponentName("com.yq.creation", "com.yq.creation.MainActivity")
-//                intent.action = "com.qy.creation.ACTION_START_APPB"
-//                intent.data = Uri.parse("http://yq.com/data")
-//                intent.putExtra("msg", "hello")
-//                startActivity(intent)
-//            } else {
-//                Toast.makeText(this, "已经在运行了", Toast.LENGTH_LONG).show()
-//            }
-
-
+            try {
+                intent.component = ComponentName("com.yq.creation", "com.yq.creation.MainActivity")
+                startActivity(intent)
+            } catch (e: Exception) {
+            }
         }
 
 
@@ -112,6 +86,8 @@ class MainActivity : AppCompatActivity() {
             fileDir.mkdirs()
         }
 
+        val packageName = "com.yq.creation"
+
         val path = fileDir.absolutePath
         // 支持输入日志到文件
         LogUtils.getLog2FileConfig()
@@ -120,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             .configLog2HttpFilePath("$path/mqtt/${packageName}/log/http")
             .configLogFileEngine(LogFileEngineFactory(this))
             .configHttpLogFileEngine(LogFileHttpEngineFactory(this))
-            .configSplitFile(1)
+            .configSplitFile(2)
             .configDaysOfExpire(7) // 设置过期天数
             .flushAsync()
 
@@ -151,8 +127,6 @@ class MainActivity : AppCompatActivity() {
 
     fun zipFile() {
         thread {
-
-
             val storageDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
 
@@ -230,6 +204,16 @@ class MainActivity : AppCompatActivity() {
             bis.close()
             fis.close()
         }
+    }
+
+    private fun getAppVersion(): String {
+        try {
+            return BuildConfig.VERSION_NAME
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.e("AppVersionHelper", "应用未找到：$packageName")
+            ""
+        }
+        return ""
     }
 
 

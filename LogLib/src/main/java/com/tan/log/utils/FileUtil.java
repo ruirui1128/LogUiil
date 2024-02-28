@@ -5,7 +5,7 @@ import com.tan.log.LogLevel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -15,9 +15,8 @@ import java.util.Locale;
 public class FileUtil {
     private static final int MAX_DAYS = 60;
     private static final int MIN_DAYS = 0;
+    private static final long LAST_UPDATE_TIME = 24 * 60 * 60 * 1000;
 
-    // 一天的秒数
-    private static final int dayOfS = 86400;
 
     public static void checkLog() {
 
@@ -27,45 +26,39 @@ public class FileUtil {
             daysOfExpire = MAX_DAYS;
         }
 
-//        File logFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_WTF);
         File httpFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_HTTP);
         File actFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_ACTION);
-//        filterFile(logFile, daysOfExpire);
-        filterFile(actFile, daysOfExpire);
-        filterFile(httpFile, daysOfExpire);
+        deleteFile(actFile, daysOfExpire);
+        deleteFile(httpFile, daysOfExpire);
 
     }
 
-    private static void filterFile(File file, int daysOfExpire) {
-        if (file != null && file.exists() && file.isDirectory() && file.listFiles() != null
-                && file.listFiles().length > 0) {
-
-            Arrays.stream(file.listFiles())
-                    .filter(f -> f.getName().endsWith(".txt"))
-                    .forEach(f -> checkOut(f, daysOfExpire));
-
-        }
+    private static void deleteFile(File directory, int daysOfExpire) {
+        if (directory == null) return;
+        new Thread(() -> {
+            try {
+                if (directory.exists() && directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null && files.length > 0) {
+                        cleanupExpiredFiles(files, daysOfExpire);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-
-    private static void checkOut(File file, int daysOfExpire) {
-        try {
-            String fileTimeString = file.getName().replace(".txt", "");
-            long fileTime = sdf.parse(fileTimeString).getTime() / 1000L;
-
-            String today = sdf.format(System.currentTimeMillis());
-            long todayTime = sdf.parse(today).getTime() / 1000L;
-
-            // 删除过期文件
-            if ((todayTime - fileTime) / dayOfS - daysOfExpire > 0) {
+    private static void cleanupExpiredFiles(File[] files, int daysOfExpire) {
+        long currentTime = System.currentTimeMillis();
+        long outTime = daysOfExpire * LAST_UPDATE_TIME;
+        for (File file : files) {
+            long lastModified = file.lastModified();
+            long diff = currentTime - lastModified;
+            if (diff > outTime) {
                 file.delete();
             }
-
-        } catch (Exception e) {
         }
-
-
     }
 
 
