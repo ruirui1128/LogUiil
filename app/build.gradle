@@ -9,10 +9,10 @@ android {
 
     defaultConfig {
         applicationId "com.mind.log"
-        minSdk 24
+        minSdk 23
         targetSdk 33
-        versionCode 201
-        versionName "2.0.1"
+        versionCode 202
+        versionName "2.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
