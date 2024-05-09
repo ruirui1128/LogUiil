@@ -32,6 +32,8 @@ public class LogFileEngineFactory implements LogFileEngine {
 
     private Context context;
 
+    private int capacity = 4096;
+
     public LogFileEngineFactory(@NonNull Context context) {
         if (context == null) {
             throw new NullPointerException("Context must not null!");
@@ -40,6 +42,16 @@ public class LogFileEngineFactory implements LogFileEngine {
         dateFormat = new SimpleDateFormat(LOG_DATE_FORMAT, Locale.getDefault());
     }
 
+    public LogFileEngineFactory(@NonNull Context context,int capacity) {
+        if (context == null) {
+            throw new NullPointerException("Context must not null!");
+        }
+        this.capacity = capacity;
+        this.context = context.getApplicationContext();
+        dateFormat = new SimpleDateFormat(LOG_DATE_FORMAT, Locale.getDefault());
+    }
+
+
     @Override
     public void writeToFile(File logFile, @LogLevel.LogLevelType int logLevel, String logContent, LogFileParam params) {
         if (logLevel <= LogLevel.TYPE_ACTION) {
@@ -47,7 +59,7 @@ public class LogFileEngineFactory implements LogFileEngine {
                 synchronized (LogFileEngineFactory.class) {
                     if (buffer == null) {
                         File bufferFile = new File(context.getFilesDir() , ".log4aCache");
-                        buffer = new LogBuffer(bufferFile.getAbsolutePath(), 4096,
+                        buffer = new LogBuffer(bufferFile.getAbsolutePath(), capacity,
                                 logFile.getAbsolutePath(), false);
                     }
                 }

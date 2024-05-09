@@ -33,10 +33,21 @@ public class LogFileHttpEngineFactory implements LogFileEngine {
 
     private Context context;
 
+    private int capacity = 4096;
+
     public LogFileHttpEngineFactory(@NonNull Context context) {
         if (context == null) {
             throw new NullPointerException("Context must not null!");
         }
+        this.context = context.getApplicationContext();
+        dateFormat = new SimpleDateFormat(LOG_DATE_FORMAT, Locale.getDefault());
+    }
+
+    public LogFileHttpEngineFactory(@NonNull Context context, int capacity) {
+        if (context == null) {
+            throw new NullPointerException("Context must not null!");
+        }
+        this.capacity = capacity;
         this.context = context.getApplicationContext();
         dateFormat = new SimpleDateFormat(LOG_DATE_FORMAT, Locale.getDefault());
     }
@@ -46,8 +57,8 @@ public class LogFileHttpEngineFactory implements LogFileEngine {
         if (buffer == null) {
             synchronized (LogFileHttpEngineFactory.class) {
                 if (buffer == null) {
-                    File bufferFile = new File(context.getFilesDir() , ".log4aCache-h");
-                    buffer = new LogBuffer(bufferFile.getAbsolutePath(), 4096,
+                    File bufferFile = new File(context.getFilesDir(), ".log4aCache-h");
+                    buffer = new LogBuffer(bufferFile.getAbsolutePath(), capacity,
                             logFile.getAbsolutePath(), false);
                 }
             }
