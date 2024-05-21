@@ -92,12 +92,18 @@ public final class LogUtils {
         printer.w(object);
     }
 
+    public static void h(String msg,Object obj) {
+        printer.h(msg,obj);
+    }
     public static void h(Object obj) {
         printer.h(obj);
     }
 
     public static void a(Object obj) {
         printer.a(obj);
+    }
+    public static void a(String msg,Object obj) {
+        printer.a(msg,obj);
     }
 
     /**
