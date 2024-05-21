@@ -342,6 +342,11 @@ public class Logger implements Printer {
     }
 
     @Override
+    public void h(String message, Object msg) {
+        logString(TYPE_HTTP, message, msg);
+    }
+
+    @Override
     public void h(Object object) {
         logObject(TYPE_HTTP, object);
     }
@@ -349,6 +354,11 @@ public class Logger implements Printer {
     @Override
     public void a(Object object) {
         logObject(TYPE_ACTION, object);
+    }
+
+    @Override
+    public void a(String message, Object msg) {
+        logString(TYPE_ACTION, message, msg);
     }
 
 

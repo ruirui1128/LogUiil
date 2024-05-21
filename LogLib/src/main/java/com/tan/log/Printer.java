@@ -24,6 +24,8 @@ public interface Printer {
     void json(String json);
     void xml(String xml);
 
+    void h(String message,Object msg);
     void h(Object msg);
     void a(Object msg);
+    void a(String message,Object msg);
 }
