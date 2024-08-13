@@ -11,8 +11,8 @@ android {
         applicationId "com.mind.log"
         minSdk 23
         targetSdk 33
-        versionCode 202
-        versionName "2.0.2"
+        versionCode 207
+        versionName "2.0.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
