@@ -120,6 +120,14 @@ public final class LogUtils {
         printer.e(object);
     }
 
+    public static void crash(String msg, Object args) {
+        printer.crash(msg, args);
+    }
+
+    public static void crash(Object object) {
+        printer.crash(object);
+    }
+
     /**
      * assert输出
      *

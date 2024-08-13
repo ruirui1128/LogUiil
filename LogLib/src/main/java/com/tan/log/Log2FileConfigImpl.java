@@ -28,18 +28,15 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
     private LogFileEngine httpEngine;
 
-//    private LogFileEngine actionEngine;
+    private LogFileEngine crashEngine;
 
     private LogFileFilter fileFilter;
     private @LogLevel.LogLevelType int logLevel = LogLevel.TYPE_ERROR;
     private boolean enable = false;
-    private String logFormatName = DEFAULT_LOG_NAME_FORMAT;
-    private String logHttpFormatName = DEFAULT_LOG_NAME_FORMAT;
-    //    private String logActionFormatName = DEFAULT_LOG_NAME_FORMAT;
     private String logPath;
     private String httpLogPath;
-    //    private String actionLogPath;
-    private static Log2FileConfigImpl singleton;
+    private String crashLogPath;
+    private static volatile Log2FileConfigImpl singleton;
     private String customFormatName;
 
     // 设置过期天数  小于等于0则不开启 大于等于60按照60天算
@@ -79,7 +76,12 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         } else {
             this.httpLogPath = path;
         }
+        return this;
+    }
 
+    @Override
+    public Log2FileConfig configLog2CrashFilePath(String logPath) {
+        this.crashLogPath = logPath;
         return this;
     }
 
@@ -121,28 +123,32 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         throw new RuntimeException("Log File Path is invalid or no sdcard permission");
     }
 
-//    String getActionLogPath() {
-//        if (TextUtils.isEmpty(actionLogPath)) {
-//            throw new RuntimeException("actionLogPath  must not be empty");
-//        }
-//        File file = new File(actionLogPath);
-//        if (file.exists() || file.mkdirs()) {
-//            return actionLogPath;
-//        }
-//        throw new RuntimeException("Log File Path is invalid or no sdcard permission");
-//    }
+    String getCrashLogPath() {
+        if (TextUtils.isEmpty(crashLogPath)) {
+            throw new RuntimeException("crashLogPath  must not be empty");
+        }
+        File file = new File(crashLogPath);
+        if (file.exists() || file.mkdirs()) {
+            return crashLogPath;
+        }
+        throw new RuntimeException("crashLogPath is invalid or no sdcard permission");
+    }
 
 
     /**
      * 此方法重置日期格式,在不关机的情况下，重新自动分割文件
      */
     public Log2FileConfig resetFormatName() {
-        String logFormat = new LogPattern.Log2FileNamePattern(logFormatName).doApply();
-        String httpFormat = new LogPattern.Log2FileNamePattern(logHttpFormatName).doApply();
-        if ((customFormatName != null && !customFormatName.equals(logFormat)) && (httpLogFormatName != null && !httpLogFormatName.equals(httpFormat))) {
+        String logFormat = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
+        String httpFormat = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
+        String crashFormat = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
+        if ((customFormatName != null && !customFormatName.equals(logFormat))
+                || (httpLogFormatName != null && !httpLogFormatName.equals(httpFormat))
+                || (crashLogFormatName != null && !crashLogFormatName.equals(crashFormat))) {
             flushAsync();
             customFormatName = null;
             httpLogFormatName = null;
+            crashLogFormatName = null;
         }
         return this;
 
@@ -150,7 +156,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
     String getLogFormatName() {
         if (customFormatName == null) {
-            customFormatName = new LogPattern.Log2FileNamePattern(logFormatName).doApply();
+            customFormatName = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
         }
         return customFormatName;
     }
@@ -159,19 +165,19 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
     String getLogHttpFormatName() {
         if (httpLogFormatName == null) {
-            httpLogFormatName = new LogPattern.Log2FileNamePattern(logHttpFormatName).doApply();
+            httpLogFormatName = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
         }
         return httpLogFormatName;
     }
 
-//    private String actionLogFormatName;
-//
-//    String getActionLogFormatName() {
-//        if (actionLogFormatName == null) {
-//            actionLogFormatName = new LogPattern.Log2FileNamePattern(logActionFormatName).doApply();
-//        }
-//        return actionLogFormatName;
-//    }
+    private String crashLogFormatName;
+
+    String getCrashLogFormatName() {
+        if (crashLogFormatName == null) {
+            crashLogFormatName = new LogPattern.Log2FileNamePattern(DEFAULT_LOG_NAME_FORMAT).doApply();
+        }
+        return crashLogFormatName;
+    }
 
 
     @Override
@@ -193,6 +199,12 @@ public class Log2FileConfigImpl implements Log2FileConfig {
     @Override
     public Log2FileConfig configHttpLogFileEngine(LogFileEngine engine) {
         this.httpEngine = engine;
+        return this;
+    }
+
+    @Override
+    public Log2FileConfig configCrashLogFileEngine(LogFileEngine engine) {
+        this.crashEngine = engine;
         return this;
     }
 
@@ -225,8 +237,8 @@ public class Log2FileConfigImpl implements Log2FileConfig {
             }
         } else if (level == LogLevel.TYPE_HTTP) {
             return new File(getHttpLogPath());
-        } else {
-//            return new File(getActionLogPath());
+        } else if (level == LogLevel.TYPE_CRASH) {
+            return new File(getCrashLogPath());
         }
         return null;
     }
@@ -248,7 +260,7 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         }
         scheduler = Executors.newScheduledThreadPool(1);
         Runnable runnableCode = this::resetFormatName;
-        scheduler.scheduleAtFixedRate(runnableCode, min, min, TimeUnit.MINUTES);
+        scheduler.scheduleWithFixedDelay(runnableCode, min, min, TimeUnit.MINUTES);
 
         return this;
 
@@ -275,6 +287,9 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         if (httpEngine != null) {
             httpEngine.flushAsync();
         }
+        if (crashEngine != null) {
+            crashEngine.flushAsync();
+        }
         FileUtil.checkLog();
     }
 
@@ -285,6 +300,9 @@ public class Log2FileConfigImpl implements Log2FileConfig {
         }
         if (httpEngine != null) {
             httpEngine.release();
+        }
+        if (crashEngine != null) {
+            crashEngine.release();
         }
         cancelSplitFile();
     }
@@ -299,6 +317,10 @@ public class Log2FileConfigImpl implements Log2FileConfig {
 
     LogFileEngine getHttpEngine() {
         return httpEngine;
+    }
+
+    LogFileEngine getCrashEngine() {
+        return crashEngine;
     }
 
 

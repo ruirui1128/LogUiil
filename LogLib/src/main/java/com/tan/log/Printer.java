@@ -28,4 +28,7 @@ public interface Printer {
     void h(Object msg);
     void a(Object msg);
     void a(String message,Object msg);
+
+    void crash(Object msg);
+    void crash(String message,Object msg);
 }

@@ -2,6 +2,7 @@ package com.tan.log;
 
 
 import static com.tan.log.LogLevel.TYPE_ACTION;
+import static com.tan.log.LogLevel.TYPE_CRASH;
 import static com.tan.log.LogLevel.TYPE_DEBUG;
 import static com.tan.log.LogLevel.TYPE_ERROR;
 import static com.tan.log.LogLevel.TYPE_HTTP;
@@ -361,6 +362,16 @@ public class Logger implements Printer {
         logString(TYPE_ACTION, message, msg);
     }
 
+    @Override
+    public void crash(Object msg) {
+        logObject(TYPE_CRASH, msg);
+    }
+
+    @Override
+    public void crash(String message, Object msg) {
+        logString(TYPE_CRASH, message, msg);
+    }
+
 
     /**
      * 打印日志到 logcat
@@ -432,13 +443,13 @@ public class Logger implements Printer {
                 log2FileConfig.getHttpEngine().writeToFile(logFile, logLevel, logContent, param);
             }
 
-        } else {
-//            if (log2FileConfig.getActionEngine() != null) {
-//                File logFile = new File(log2FileConfig.getActionLogPath(), log2FileConfig.getActionLogFormatName());
-//                LogFileParam param = new LogFileParam(System.currentTimeMillis(), logLevel,
-//                        Thread.currentThread().getName(), tagName);
-//                log2FileConfig.getActionEngine().writeToFile(logFile, logLevel, logContent, param);
-//            }
+        } else if (logLevel == TYPE_CRASH) {
+            if (log2FileConfig.getCrashEngine() != null) {
+                File logFile = new File(log2FileConfig.getCrashLogPath(), log2FileConfig.getCrashLogFormatName());
+                LogFileParam param = new LogFileParam(System.currentTimeMillis(), logLevel,
+                        Thread.currentThread().getName(), tagName);
+                log2FileConfig.getCrashEngine().writeToFile(logFile, logLevel, logContent, param);
+            }
 
 
         }

@@ -1,8 +1,6 @@
 package com.tan.log.config;
 
 
-import android.content.Context;
-
 import com.tan.log.Log2FileConfigImpl;
 import com.tan.log.LogLevel;
 import com.tan.log.file.LogFileEngine;
@@ -22,6 +20,7 @@ public interface Log2FileConfig {
     Log2FileConfig configLog2HttpFilePath(String logPath);
 
     // Log2FileConfig configLog2ActionFilePath(String logPath);
+    Log2FileConfig configLog2CrashFilePath(String logPath);
 
 
     Log2FileConfig configLog2FileLevel(@LogLevel.LogLevelType int level);
@@ -30,7 +29,7 @@ public interface Log2FileConfig {
 
     Log2FileConfig configHttpLogFileEngine(LogFileEngine engine);
 
-    //Log2FileConfig configActionLogFileEngine(LogFileEngine engine);
+    Log2FileConfig configCrashLogFileEngine(LogFileEngine engine);
 
     Log2FileConfig configLogFileFilter(LogFileFilter fileFilter);
 

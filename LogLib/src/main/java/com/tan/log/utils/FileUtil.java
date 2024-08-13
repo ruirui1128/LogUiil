@@ -28,8 +28,10 @@ public class FileUtil {
 
         File httpFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_HTTP);
         File actFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_ACTION);
+        File crashFile = Log2FileConfigImpl.getInstance().getLogFile(LogLevel.TYPE_CRASH);
         deleteFile(actFile, daysOfExpire);
         deleteFile(httpFile, daysOfExpire);
+        deleteFile(crashFile, daysOfExpire);
 
     }
 
